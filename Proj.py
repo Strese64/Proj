@@ -204,8 +204,8 @@ class Proj:
         y = 0.0
 
         # Ist Koordinate in Europa?
-        if (l < -32.0 or l > 41.0): return false
-        if (b < 27.0 or b > 82.0): return false
+        if (l < -32.0 or l > 41.0): return (0.0, 0.0)
+        if (b < 27.0 or b > 82.0): return (0.0, 0.0)
 
         e2 = 2.0 * f - (f * f)
         e = Math.sqrt(e2)
