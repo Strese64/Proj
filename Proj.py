@@ -14,7 +14,7 @@ import math as Math
 class Proj:
     EPSGs = {   3035:("LAEA",0), 
                 3044:("ETRS",32),  3045:("ETRS",33), 
-                4647:("ETRS",32),  5650:("ETRS",32), 
+                4647:("ETRS",32),  5650:("ETRS",33), 
                 4258:("GEOD", 0),  4326:("GEOD", 0), 
                25832:("ETRS",32), 25833:("ETRS",33) }
 
