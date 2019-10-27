@@ -2,22 +2,23 @@
 Map Projections for Germany is a Python Class.
 
 ## Fundamentals
-The rotation ellipsoid GRS80 (Geodetic Reference System, at date 1980) is the basis for all projections in the world, except the U.S.A., they use WGS84, which is identical. The geodesist and surveyor in the world use the EPSG (European Petroleum Surveying Group) codes to identify the diffenrent CRS (Coordinate Reference Systems).
+The rotation ellipsoid GRS80 (Geodetic Reference System, at date 1980) is the basis for all projections in the world, except the U.S.A., they use WGS84, which is identical. The geodesist and surveyor in the world use the EPSG (European Petroleum Surveying Group) codes to identify the different CRS (Coordinate Reference Systems).
 
 * EPSG:4258 (and EPSG:4326) for the geodetic coordinates (the angles longitude and latitude), world wide
 * EPSG:3034 as the LCC Lambert-projection, for Europe
 * EPSG:3035 as the LAEA Lambert-projection, for Europe
-* EPSG:3044 (as well as EPSG:4647 and EPSG:25832) for ETRS89 coordinates of the 32nd UTM zone
-* EPSG:3045 (as well as EPSG:5650 and EPSG:25833) for ETRS89 coordinates of the 33rd UTM zone
+* EPSG:3044 (as well as EPSG:4647 and EPSG:25832) for ETRS89 coordinates of the 32nd UTM zone (here: Germany)
+* EPSG:3045 (as well as EPSG:5650 and EPSG:25833) for ETRS89 coordinates of the 33rd UTM zone (here: Germany)
+* EPSG:3038 - EPSG:3051 for whole Europe
 
-Here we use only the number (EPSG-code). ETRS89 is the official coordinate system of the nations in the European Union.
+Here we use only the number (EPSG-code). ETRS89 is the official coordinate system of all nations in the European Union.
 
 ## Usage
 
 Just use the following example to transform from EPSG:4258 (GRS80) to EPSG:3035 (LAEA):
 
 ```
-t = Proj(von=4258, nach=3035)   # von=from nach=to
+t = Proj(fromEPSG=4258, toEPSG=3035)
 (x, y, z) = t.transform(12.12, 51.23)
 (x, y, z) = t.transform(12.00, 51.00)
 ```
