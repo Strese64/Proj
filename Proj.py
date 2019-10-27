@@ -1,25 +1,54 @@
 """ Coordinate transformation based on mathematic formulars of Maarten Hooijberg (NL).
     Derived from my C# - API's for geodetic coordinates and functions.
-    Dipl.-Ing. (Geodesy) Michael Dreesmann (DE), (C)opyright 2008-2019
-    License: MIT-License
+    Dipl.-Ing. (Surveying/Geodesy) Michael Dreesmann (DE), (C)opyright 2008-2019
     ----------------------------------------------------------------------------------------
-    Version 1.0-4 Beta, at 27.10.2019
+    Version 1.0-5 Beta, at 2019-10-27
+    1.0-5   MD  Make it more international and with more descriptions
     1.0-4   MD  Updated the module test
     1.0-3   MD  Erweiterung um die Systeme LCC, GOOG, XYZ
     1.0-2   MD  Fehlerkorrektur    
     ----------------------------------------------------------------------------------------
     Usage:
-		t = Proj(von=4258, nach=3035)
+		t = Proj(fromEPSG=4258, toEPSG=3035)
 		(x, y, z) = t.transform(12.12, 51.23)
 		(x, y, z) = t.transform(12.00, 51.00)
+    ---------------------------------------------------------------------------------------
+    License: MIT-License
+    In memory to Carl Friedrich Gauß one of the world's most intelligent mathematics and 
+    geodesist. He developed as a teenager the basics of the curve fitting and the method of 
+    least squares.
 """
 import math as Math
 
 class Proj:
+    """ Some coordinate projection functions for the earth
+        EPSG    Abbr.   Information
+        3034    LCC     Official EU Lambert LCC projection 1)
+        3035    LAEA    Official EU Lambert LAEA projection 2)
+        3038    ETRS    Official EU ETRS89 UTM projection, 26th zone North 3)
+        ...
+        3051    ETRS    Official EU ETRS89 UTM projection, 39th zone North
+        3857    GOOG    Google projection
+        4647    ETRS    Official German ETRS89 UTM projection, 32nd zone North 3)
+        5650    ETRS    Official German ETRS89 UTM projection, 33rd zone North
+        7912    XYZ     3D coordinates of the GRS80 ellipsoid
+        25832   ETRS    Official EU ETRS89 UTM projection, 32nd zone North
+        25833   ETRS    Official EU ETRS89 UTM projection, 33rd zone North
+
+        1)  usefull for thematic maps
+        2)  usefull for thematic maps and euorpean-wide geospatial data
+        3)  usefull for cadastral maps and high-precision geospatial data
+    """
     EPSGs = { 3035:("LAEA", 0),  3034:( "LCC", 0),
-              3857:("GOOG", 0),  7912:( "XYZ", 0),
-              4258:("GEOD", 0),  # the official basis-world geodetic system for the earth
+              4258:("GEOD", 0),  # the official geodetic reference system of the earth
+              3038:("ETRS",26),  3039:("ETRS",27), 
+              3040:("ETRS",28),  3041:("ETRS",29), 
+              3042:("ETRS",30),  3043:("ETRS",31), 
               3044:("ETRS",32),  3045:("ETRS",33), 
+              3046:("ETRS",34),  3047:("ETRS",35), 
+              3048:("ETRS",36),  3049:("ETRS",37), 
+              3050:("ETRS",38),  3051:("ETRS",39), 
+              3857:("GOOG", 0),  7912:( "XYZ", 0),
               4647:("ETRS",32),  5650:("ETRS",33), 
              25832:("ETRS",32), 25833:("ETRS",33) }
 
@@ -31,16 +60,19 @@ class Proj:
     e2  = (2.0*f - f*f)
 
 #   ---------------------------------------------------------
-#   Definition der Instanzen - Jede Klasse eine Transformation
+#   Constructor
 #   ---------------------------------------------------------
-    def __init__(self, von=4258, nach=3035):
-        """ Konstruktor: von EPSG:<n> nach EPSG:<n> """
-        chk_von   = int(von)
-        chk_nach  = int(nach)
+    def __init__(self, fromEPSG=4258, toEPSG=3035):
+        """ Constructor: set origin and target CRS (in Europe) 
+        """
+        chk_von   = int(fromEPSG)
+        chk_nach  = int(toEPSG)
         if chk_von  == 4326:
-            print("Official Basis-CRS of the Earth = EPSG:4258")
+            print("Official CRS of the Earth = EPSG:4258")
+            chk_von = 4258
         if chk_nach == 4326:
-            print("Official Basis-CRS of the Earth = EPSG:4258")
+            print("Official CRS of the Earth = EPSG:4258")
+            chk_nach = 4258
         if int(chk_von)  in self.EPSGs: self.von  = int(chk_von)
         if int(chk_nach) in self.EPSGs: self.nach = int(chk_nach)
 
@@ -48,28 +80,35 @@ class Proj:
 #   Transformiere eine Koordinate
 #   ---------------------------------------------------------
     def transform(self, ost, nord, Z=0.0):
-        """ Transformation der Koordinaten """
+        """ Main transformation method
+            > input     2D oder 3D coordinates
+            > output    3D coordinate:
+                        (east-value, north-value, elevation) or
+                        (3D X, 3D Y, 3D Z)
+        """
         dle_ost = float(ost)
         dle_nrd = float(nord)
         dle_z   = float(Z)
 
+        # transform from <ORIGIN> to GRS80
         (sys, zn) = self.EPSGs[self.von]
         if   sys == 'LAEA': 
-            (x,y) = self.trnLAEA_GRS80(dle_ost, dle_nrd)
+            (x, y) = self.trnLAEA_GRS80(dle_ost, dle_nrd)
         elif sys == 'XYZ': 
-            (x,y, z) = self.trnXYZ_GRS80(dle_ost, dle_nrd, dle_z)
+            (x, y, z) = self.trnXYZ_GRS80(dle_ost, dle_nrd, dle_z)
         elif sys == 'LCC': 
-            (x,y) = self.trnLCC_GRS80(dle_ost, dle_nrd)
+            (x, y) = self.trnLCC_GRS80(dle_ost, dle_nrd)
         elif sys == 'GOOG': 
-            (x,y) = self.trnGOOG_GRS80(dle_ost, dle_nrd)
+            (x, y) = self.trnGOOG_GRS80(dle_ost, dle_nrd)
         elif sys == 'ETRS':
             if self.von == 4647: dle_ost -= 32000000.0
             if self.von == 5650: dle_ost -= 33000000.0
-            (x,y) = self.trnETRS_GRS80(dle_ost, dle_nrd, zn)
-        else:    #  Geodätische Koordinaten auf dem GRS80-Ellipsoid
+            (x, y) = self.trnETRS_GRS80(dle_ost, dle_nrd, zn)
+        else:    #  GRS80
             x = dle_ost
             y = dle_nrd
         
+        # transform from GRS80 to <TARGET>
         dle_z = 0.0
         (sys, zn) = self.EPSGs[self.nach]
         if   sys == 'LAEA': 
@@ -94,6 +133,10 @@ class Proj:
 #   3D - Transformation auf dem GRS80-Rotationsellipsoid
 #   ---------------------------------------------------------
     def trnXYZ_GRS80(self, X, Y, Z):
+        """ Transformation: 
+            ORIGIN  3D Geocentre    X Y Z
+            TARGET  GRS80           l b h
+        """
         l = Math.atan(Y/X)
         b0 = Math.atan(Z/(1 - self.e*self.e)/Math.sqrt(X*X + Y*Y))
         N0 = self.a / (Math.sqrt(1 - self.e*self.e*Math.sin(b0)*Math.sin(b0)))
@@ -107,6 +150,10 @@ class Proj:
         return (l, b, h0)
 
     def trnGRS80_XYZ(self, l, b, h):
+        """ Transformation: 
+            ORIGIN  GRS80           l b h
+            TARGET  3D Geocentre    X Y Z
+        """
         N = self.a / (Math.sqrt(1 - self.e*self.e*Math.sin(b/self.rho)*Math.sin(b/self.rho)))
         X = (N+h) * Math.cos(b/self.rho) * Math.cos(l/self.rho)
         Y = (N+h) * Math.cos(b/self.rho) * Math.sin(l/self.rho)
@@ -117,6 +164,11 @@ class Proj:
 #   LCC - Transformation auf dem GRS80-Rotationsellipsoid
 #   ---------------------------------------------------------
     def trnLCC_GRS80(self, ee, nn):
+        """ Transformation: 
+            ORIGIN  LCC EU          x y
+            TARGET  GRS80           l b
+            *** Only usable in Europe ***
+        """
         ltl = 35.0 / self.rho
         ltu = 65.0 / self.rho
         ltc = 52.0 / self.rho
@@ -193,6 +245,11 @@ class Proj:
         return (lon, lat)
 
     def trnGRS80_LCC(self, l, b):
+        """ Transformation: 
+            ORIGIN  GRS80           l b
+            TARGET  LCC EU          x y
+            *** Only usable in Europe ***
+        """
         ltl = 35.0 / self.rho
         ltu = 65.0 / self.rho
         ltc = 52.0 / self.rho
@@ -253,6 +310,10 @@ class Proj:
 #   Mercator-Transformation auf dem GRS80-Rotationsellipsoid
 #   ---------------------------------------------------------
     def trnGOOG_GRS80(self, x, y):
+        """ Transformation: 
+            ORIGIN  GOOGLE          x y
+            TARGET  GRS80           l b
+        """
         o = 2.0 * Math.pi * self.a / 2.0
         l = (x/o) * 180.0
         b = (y/o) * 180.0
@@ -260,6 +321,10 @@ class Proj:
         return (l, b)
 
     def trnGRS80_GOOG(self, l, b):
+        """ Transformation: 
+            ORIGIN  GRS80           l b
+            TARGET  GOOGLE          x y
+        """
         o = 2.0 * Math.pi * self.a / 2.0
         x = l * o / 180.0
         y = Math.log( Math.tan((90.0+b)*Math.pi/360.0)) * self.rho
@@ -270,7 +335,11 @@ class Proj:
 #   LAEA - Transformation auf dem GRS80-Rotationsellipsoid
 #   ---------------------------------------------------------
     def trnLAEA_GRS80(self, xi, yi):
-        """ Transformation: Lambert LAEA (Europa) nach GRS80 Lamda, Phi (Erde) """
+        """ Transformation: 
+            ORIGIN  LAEA EU         x y
+            TARGET  GRS80           l b
+            *** Only usable in Europe ***
+        """
         e = e2 = e4 = e6 = 0.0
         l0 = b0 = 0.0
         x0 = y0 = 0.0
@@ -318,7 +387,11 @@ class Proj:
         return (l, b)
 
     def trnGRS80_LAEA(self, l, b):
-        """ Transformation: GRS80 Lamda, Phi (Erde) nach Lambert LAEA (Europa) """
+        """ Transformation: 
+            ORIGIN  GRS80           l b
+            TARGET  LAEA EU         x y
+            *** Only usable in Europe ***
+        """
         e = e2 = 0.0
         l0 = b0 = 0.0
         x0 = y0 = 0.0
@@ -367,7 +440,11 @@ class Proj:
 #   UTM - Transformation auf dem GRS80-Rotationsellipsoid
 #   ---------------------------------------------------------
     def trnETRS_GRS80(self, xi, yi, z):
-        """ Transformation: UTM/ETRS89 Zone <z> (Europa) nach GRS80 Lamda, Phi (Erde) """
+        """ Transformation: 
+            ORIGIN  ETRS89 N        x y zone
+            TARGET  GRS80           l b
+            *** Only usable in Europe ***
+        """
         k0 = 0.9996
         e = e2 = ei2 = ei4 = ei6 = ei8 = 0.0
         l0 = b0 = 0.0
@@ -444,7 +521,11 @@ class Proj:
 
 
     def trnGRS80_ETRS(self, l, b, z):
-        """ Transformation: UTM/ETRS89 Zone <z> (Europa) nach GRS80 Lamda, Phi (Erde) """
+        """ Transformation: 
+            ORIGIN  GRS80           l b
+            TARGET  ETRS89 N        x y zone
+            *** Only usable in Europe ***
+        """
         k0 = 0.9996
         e = e2 = ei2 = ei4 = ei6 = ei8 = 0.0
         ll = bb = l0 = b0 = 0.0
@@ -521,63 +602,90 @@ class Proj:
 
 
 if __name__ == "__main__":
+    """ The module test
+        ---------------------------------------------------------------
+        1)  define a longitude/latitude coordinate
+        2)  transform into a target crs and back to the origin
+        3)  compare the defined and calculated coordinate, and compute
+            the distance in meter, remember the errors (> 0.1m)
+        4)  repeat 2) and 3) for each transformation function
+        5)  Return the errors or "OK"
+    """
     xi = 12.1
     yi = 51.2
     fk = 111111.111
     print("Calculate the compute blurring in [m]...")
+    ne = 0  # no of errors
 
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(4258,xi,yi,0.0))
 
     # Test1: GRS80 -> LAEA -> GRS80
-    t11 = Proj(von=4258, nach=3035)
+    t11 = Proj(fromEPSG=4258, toEPSG=3035)
     (x1, y1, z1) = t11.transform(xi, yi)
-    t12 = Proj(von=3035, nach=4258)
+    t12 = Proj(fromEPSG=3035, toEPSG=4258)
     (x2, y2, z2) = t12.transform(x1, y1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3035,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
 
     # Test2: GRS80 -> ETRS89/32N -> GRS80
-    t21 = Proj(von=4258, nach=3044)
+    t21 = Proj(fromEPSG=4258, toEPSG=3044)
     (x1, y1, z1) = t21.transform(xi, yi)
-    t22 = Proj(von=3044, nach=4258)
+    t22 = Proj(fromEPSG=3044, toEPSG=4258)
     (x2, y2, z2) = t22.transform(x1, y1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3044,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
 
     # Test3: GRS80 -> ETRS89/33N -> GRS80
-    t31 = Proj(von=4258, nach=3045)
+    t31 = Proj(fromEPSG=4258, toEPSG=3045)
     (x1, y1, z1) = t31.transform(xi, yi)
-    t32 = Proj(von=3045, nach=4258)
+    t32 = Proj(fromEPSG=3045, toEPSG=4258)
     (x2, y2, z2) = t32.transform(x1, y1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3045,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
 
     # Test4: GRS80 -> LCC -> GRS80
-    t41 = Proj(von=4258, nach=3034)
+    t41 = Proj(fromEPSG=4258, toEPSG=3034)
     (x1, y1, z1) = t41.transform(xi, yi)
-    t42 = Proj(von=3034, nach=4258)
+    t42 = Proj(fromEPSG=3034, toEPSG=4258)
     (x2, y2, z2) = t42.transform(x1, y1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3034,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
 
     # Test5: GRS80 -> GOOG -> GRS80
-    t51 = Proj(von=4258, nach=3857)
+    t51 = Proj(fromEPSG=4258, toEPSG=3857)
     (x1, y1, z1) = t51.transform(xi, yi)
-    t52 = Proj(von=3857, nach=4258)
+    t52 = Proj(fromEPSG=3857, toEPSG=4258)
     (x2, y2, z2) = t52.transform(x1, y1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3857,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
 
     # Test6: GRS80 -> XYZ -> GRS80
-    t61 = Proj(von=4258, nach=7912)
+    t61 = Proj(fromEPSG=4258, toEPSG=7912)
     (x1, y1, z1) = t61.transform(xi, yi)
-    t62 = Proj(von=7912, nach=4258)
+    t62 = Proj(fromEPSG=7912, toEPSG=4258)
     (x2, y2, z2) = t62.transform(x1, y1, z1)
     print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(7912,x1,y1,z1))
-    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
-    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+ #   print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+ #   print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
+    if abs(x2-xi)*fk > 0.1: ne += 1
+    if abs(y2-yi)*fk > 0.1: ne += 1
+
+    if ne == 0:
+        print("OK")
+    else:
+        print("Erros counted: {}".format(ne))
