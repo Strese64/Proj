@@ -1,7 +1,8 @@
+# v1.0-5 Beta at 2019-10-27
 import Proj as pj 
 
 # create a Proj-instance
-t = pj.Proj(von=4258, nach=3035)
+t = pj.Proj(fromEPSG=4258, toEPSG=3035)
 
 # set the longitude l and latitude b
 l = 9.54152
