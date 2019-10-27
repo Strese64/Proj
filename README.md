@@ -18,8 +18,8 @@ Just use the following example to transform from EPSG:4258 (GRS80) to EPSG:3035 
 
 ```
 t = Proj(von=4258, nach=3035)
-(x, y) = t.transform(12.12, 51.23)
-(x, y) = t.transform(12.00, 51.00)
+(x, y, z) = t.transform(12.12, 51.23)
+(x, y, z) = t.transform(12.00, 51.00)
 ```
 
 We use the parameter order east value and north value.
