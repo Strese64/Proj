@@ -3,7 +3,8 @@
     Dipl.-Ing. (Geodesy) Michael Dreesmann (DE), (C)opyright 2008-2019
     License: MIT-License
     ----------------------------------------------------------------------------------------
-    Version 1.0-3 Beta, at 15.10.2019
+    Version 1.0-4 Beta, at 27.10.2019
+    1.0-4   MD  Updated the module test
     1.0-3   MD  Erweiterung um die Systeme LCC, GOOG, XYZ
     1.0-2   MD  Fehlerkorrektur    
     ----------------------------------------------------------------------------------------
@@ -520,56 +521,63 @@ class Proj:
 
 
 if __name__ == "__main__":
-    xi = 12.12345
-    yi = 51.23456
-    fk = 40000000.0 / 360.0
-    print("Calculate the compute blurring ...")
+    xi = 12.1
+    yi = 51.2
+    fk = 111111.111
+    print("Calculate the compute blurring in [m]...")
+
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(4258,xi,yi,0.0))
 
     # Test1: GRS80 -> LAEA -> GRS80
     t11 = Proj(von=4258, nach=3035)
     (x1, y1, z1) = t11.transform(xi, yi)
     t12 = Proj(von=3035, nach=4258)
     (x2, y2, z2) = t12.transform(x1, y1)
-    print("Test1 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3035,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
 
     # Test2: GRS80 -> ETRS89/32N -> GRS80
     t21 = Proj(von=4258, nach=3044)
     (x1, y1, z1) = t21.transform(xi, yi)
     t22 = Proj(von=3044, nach=4258)
     (x2, y2, z2) = t22.transform(x1, y1)
-    print("Test2 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3044,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
 
     # Test3: GRS80 -> ETRS89/33N -> GRS80
     t31 = Proj(von=4258, nach=3045)
     (x1, y1, z1) = t31.transform(xi, yi)
     t32 = Proj(von=3045, nach=4258)
     (x2, y2, z2) = t32.transform(x1, y1)
-    print("Test3 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3045,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
 
     # Test4: GRS80 -> LCC -> GRS80
     t41 = Proj(von=4258, nach=3034)
     (x1, y1, z1) = t41.transform(xi, yi)
     t42 = Proj(von=3034, nach=4258)
     (x2, y2, z2) = t42.transform(x1, y1)
-    print("Test4 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3034,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
 
     # Test5: GRS80 -> GOOG -> GRS80
     t51 = Proj(von=4258, nach=3857)
     (x1, y1, z1) = t51.transform(xi, yi)
-#   print("3857: {:.1f} : {:.1f}".format(x1,y1))
     t52 = Proj(von=3857, nach=4258)
     (x2, y2, z2) = t52.transform(x1, y1)
-    print("Test5 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(3857,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
 
     # Test6: GRS80 -> XYZ -> GRS80
     t61 = Proj(von=4258, nach=7912)
     (x1, y1, z1) = t61.transform(xi, yi)
     t62 = Proj(von=7912, nach=4258)
     (x2, y2, z2) = t62.transform(x1, y1, z1)
-    print("Test6 :: dLambda < {:.5f} m".format( abs(x2-xi)*fk ))
-    print("            dPhi < {:.5f} m".format( abs(y2-yi)*fk ))
+    print("EPSG:{} > {:.3f} {:.3f} {:.3f}".format(7912,x1,y1,z1))
+    print("           dLambda ~ {:.4f} m".format( abs(x2-xi)*fk ))
+    print("              dPhi ~ {:.4f} m".format( abs(y2-yi)*fk ))
