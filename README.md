@@ -1,19 +1,20 @@
 # Proj
 Map Projections for Germany is a Python Class.
 
-## Grundlagen
-Der Rotationsellipsoid GRS80 (als auch das spätere identische WGS84) ist die Basis für alle Projektionen bzw. Abbildungen. Zur Kodierung der verschiedenen geodätischen Koordinatensysteme wird auf die EPSG-Mimik zurückgegriffen. Hierbei steht EPSG für die European Petroleum Surveying Group, eine Vereinigung europäischer Geodäten (Vermessungsingenieure).
+## Fundamentals
+The rotation ellipsoid GRS80 (Geodetic Reference System, at date 1980) is the basis for all projections in the world, except the U.S.A., they use WGS84, which is identical. The geodetist and surveyor in the world use the EPSG (European Petroleum Surveying Group) codes to identify the diffenrent CRS (Coordinate Reference Systems).
 
-* EPSG:4258 (sowie EPSG:4326) als Reinform der geodätischen Koordinaten (die Winkel Lambda=Länge und Phi=Breite), für die weltweite Nutzung
-* EPSG:3035 als Azimuthale Lambert-Projektion, ideal für eine Karten-Darstellung im europaweiten Kontext
-* EPSG:3044 (sowie EPSG:4647 und EPSG:25832) für ETRS89-Koordinaten der 32. Zone als UTM-Abbildung mit variablen Maßstab
-* EPSG:3045 (sowie EPSG:5650 und EPSG:25833) für ETRS89-Koordinaten der 33. Zone als UTM-Abbildung mit variablen Maßstab
+* EPSG:4258 (and EPSG:4326) for the geodetic coordinates (the angles longitude and latitude), world wide
+* EPSG:3034 as the LCC Lambert-projection, for Europe
+* EPSG:3035 as the LAEA Lambert-projection, for Europe
+* EPSG:3044 (as well as EPSG:4647 and EPSG:25832) for ETRS89 coordinates of the 32nd UTM zone
+* EPSG:3045 (as well as EPSG:5650 and EPSG:25833) for ETRS89 coordinates of the 33rd UTM zone
 
-Wir verwenden nur die Zahl und lassen das Kürzel "EPSG:" weg. Das ETRS89 in der UTM-Abbildung ist das offiziellen Koordinaten-Referenz-System (engl. CRS) der Europäischen Union. Es findet zentral im Liegenschaftskataster (den Geobasisdaten von Europa) Verwendung.
+Here we use only the number (EPSG-code). ETRS89 is the official coordinate system of the nations in the European Union.
 
-## Anwendung
+## Usage
 
-Folgendes kleines Beispiel projeziert geodätische Koordinaten ins Azimuthale Lambert-System:
+Just use the following example to transform from EPSG:4258 (GRS80) to EPSG:3035 (LAEA):
 
 ```
 t = Proj(von=4258, nach=3035)
@@ -21,23 +22,23 @@ t = Proj(von=4258, nach=3035)
 (x, y) = t.transform(12.00, 51.00)
 ```
 
-Wir verwenden in der Schnittstelle immer den Ostwert/Lambda als ersten Parameter und den Nordwert/Phi als zweiten Parameter.
+We use the parameter order east value and north value.
 
-## Testautomation
+## Test automation
 
-Wie in Python gewohnt testet sich die Schnittstelle selbst, wenn man die Klasse direkt (bspw. mit der Software VS-Code) ausführt.
+There is a module test and a unit test stored in this code.
 
-## Lizenz
+## Licence
 
-Jeder darf diese Python-Klasse für private, freie oder kommerzielle Anwendungen nutzen, wenn er den Inhalt unverändert belässt und mich wie folgt als Autor der Klasse benennt: "Python-Klasse Proj, entwickelt von Michael Dreesmann (DE), auf Basis von Hooijberg/Annoni/Luzet/Gubler/Ihde/et al, v1.0 in 2019"
+The base is the MIT-licence. Please add the following words in your code: "Python-Class Proj, developed by Michael Dreesmann (DE), based on the formula of Hooijberg/Annoni/Luzet/Gubler/Ihde/et al, v1.0 in 2019"
 
-## Quellen
+## Source
 
-Die Mathematik aus dieser Klasse wurde folgenden Quellen entnommen:
+The mathematics based on:
 
 * Maarten Hooijberg, Practical Geodesy (1997, Springer Verlag)
 * Annoni Luzet Gubler & Ihde, Map Projections for Europe (2003, European Commission, Joint Research Center)
 
-## Zum Autor
+## Author
 
-Dipl.-Ing. Michael Dreesmann hat Ende der 80'er Jahre in Bochum Vermessungswesen (Geodäsie) studiert. Seitdem arbeitet er als Geoinformatiker in der Softwareentwicklung, im 2nd/3rd Level-Support oder als Consultant und Innovationsmanager in Wirtschaftsverbänden. Er ist ein Mitautor des Buches "Geodateninfrastruktur, Grundlagen und Anwendungen" von 2004 und war 1. Geschäftsstellenleiter der Geodateninfrastruktur des Landes Brandenburg.
+Dipl.-Ing. Michael Dreesmann made a surveying/geodesy-degree in 1991 at the university of applied science of Bochum. Since than he works as Geomatic engineer at software development, 2nd/3rd Level-Support, consultant aund innovation manager. He is one of the coauthors of the book "Geodateninfrastruktur, Grundlagen und Anwendungen" from 2004.
