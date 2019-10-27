@@ -17,7 +17,7 @@ Here we use only the number (EPSG-code). ETRS89 is the official coordinate syste
 Just use the following example to transform from EPSG:4258 (GRS80) to EPSG:3035 (LAEA):
 
 ```
-t = Proj(von=4258, nach=3035)
+t = Proj(von=4258, nach=3035)   # von=from nach=to
 (x, y, z) = t.transform(12.12, 51.23)
 (x, y, z) = t.transform(12.00, 51.00)
 ```
@@ -41,4 +41,4 @@ The mathematics based on:
 
 ## Author
 
-Dipl.-Ing. Michael Dreesmann made a surveying/geodesy-degree in 1991 at the university of applied science of Bochum. Since than he works as Geomatic engineer at software development, 2nd/3rd Level-Support, consultant aund innovation manager. He is one of the coauthors of the book "Geodateninfrastruktur, Grundlagen und Anwendungen" from 2004.
+Dipl.-Ing. Michael Dreesmann made a surveying/geodesy-degree in 1991 at the university of applied science of Bochum. Since than he works as geomatics engineer as an software developer, at 2nd/3rd Level-Support, as a consultant and an innovation manager. He is one of the coauthors of the book "Geodateninfrastruktur, Grundlagen und Anwendungen" from 2004. From 2004 to 2007 he was the technical head of the SDI (Spatial Data Infrastructure) of the German state Brandenburg. From 2008 to 2011 he was a member of the Open Geospatial Consortium (OGC).
