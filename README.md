@@ -2,7 +2,7 @@
 Map Projections for Germany is a Python Class.
 
 ## Fundamentals
-The rotation ellipsoid GRS80 (Geodetic Reference System, at date 1980) is the basis for all projections in the world, except the U.S.A., they use WGS84, which is identical. The geodetist and surveyor in the world use the EPSG (European Petroleum Surveying Group) codes to identify the diffenrent CRS (Coordinate Reference Systems).
+The rotation ellipsoid GRS80 (Geodetic Reference System, at date 1980) is the basis for all projections in the world, except the U.S.A., they use WGS84, which is identical. The geodesist and surveyor in the world use the EPSG (European Petroleum Surveying Group) codes to identify the diffenrent CRS (Coordinate Reference Systems).
 
 * EPSG:4258 (and EPSG:4326) for the geodetic coordinates (the angles longitude and latitude), world wide
 * EPSG:3034 as the LCC Lambert-projection, for Europe
